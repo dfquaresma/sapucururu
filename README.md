@@ -1,13 +1,13 @@
-# NAME - IA Project 2019.1
+# Gama Sennin - IA Project 2019.1
 
 ## What is
-TODO
+A serverless function to identify species of toads threatened with extinction using computer vision.
 
 ## How to use
 TODO
 
 ## Objective
-TODO
+To help people to identify those species and protect them.
 
 ## Technologies
 * TODO 
