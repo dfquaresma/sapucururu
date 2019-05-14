@@ -1,4 +1,4 @@
-# Sapucururu - IA Project 2019.1
+# Sapucururu - AI Project 2019.1
 
 ## What is
 A serverless function to identify species of toads threatened with extinction using computer vision.
