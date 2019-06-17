@@ -36,11 +36,12 @@ def save_images_on_disk(split_urls, path_to_training, path_to_validation, tag):
                 None # print("Error downloading img " + str(progress) + ", url: " + str(split_urls[progress]))
 
 
-def download_images_to_path(tag, url_to_urls, path_to_training, path_to_validation):
+def download_images_to_path(url_to_urls, path_to_training, path_to_validation):
     page = requests.get(url_to_urls) # ship synset
     soup = BeautifulSoup(page.content, 'html.parser') # puts the content of the website into the soup variable, each url on a different line
     str_soup = str(soup) # convert soup to string so it can be split
     split_urls = str_soup.split('\r\n') # split so each url is a different possition on a list
+    tag = url_to_urls.split("=")[-1]
     save_images_on_disk(split_urls, path_to_training, path_to_validation, tag)
 
 
@@ -54,17 +55,32 @@ if __name__ == '__main__':
     except:
         None
 
-    path_to_training, path_to_validation = "./imagenet/train/isfrog/", "./imagenet/validation/isfrog/"  
+    frogs_data_urls = [
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", 
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167"
+    ]
 
-    # downloading frog data 
-    download_images_to_path("00-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", path_to_training, path_to_validation)
-    download_images_to_path("01-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", path_to_training, path_to_validation)
-    download_images_to_path("02-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", path_to_training, path_to_validation)
-    download_images_to_path("03-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", path_to_training, path_to_validation)
-    download_images_to_path("04-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", path_to_training, path_to_validation)
-    download_images_to_path("05-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776", path_to_training, path_to_validation)
-    download_images_to_path("06-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", path_to_training, path_to_validation)
-    download_images_to_path("07-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620", path_to_training, path_to_validation)
-    download_images_to_path("08-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", path_to_training, path_to_validation)
-    download_images_to_path("09-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167", path_to_training, path_to_validation)
-    download_images_to_path("10-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637", path_to_training, path_to_validation)
+    path_to_training, path_to_validation = "./imagenet/train/isfrog/", "./imagenet/validation/isfrog/"  
+    for url in frogs_data_urls:
+        # downloading frog data 
+        download_images_to_path(url, path_to_training, path_to_validation)
+
+    
+    not_frogs_data_urls = [
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01861778", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01503061", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01661091", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01473806",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07707451", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07557165", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01317541", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13066129",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13024012", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n12997654", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n04341686", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n03309808",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n00441824", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n00433661", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n00463246", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09416076",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09238926", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09468604", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09366317", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09437454",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n11672400", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13104059", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13100156", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n11722982",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n11773987", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13083023", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n02384858", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321230",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01458842", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321456", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01767661", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321579",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01324610", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01324799", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01323781"
+        ] 
+
+    path_to_training, path_to_validation = "./imagenet/train/notfrog/", "./imagenet/validation/notfrog/"  
+    for url in not_frogs_data_urls:
+        # downloading not frog data 
+        download_images_to_path(url, path_to_training, path_to_validation)
