@@ -46,7 +46,7 @@ def download_images_to_path(url_to_urls, path_to_training, path_to_validation):
 
 def download_frog_images(path_to_train, path_to_validation):
     frogs_data_urls = [
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846"], "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", 
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167"
