@@ -21,19 +21,18 @@ def save_images_on_disk(split_urls, path_to_training, path_to_validation, tag):
         # a multiple of 20 so we can follow the (relatively slow) progress
         if ((progress + 1) % 20 == 0):
             print("downloading img" + str(progress) + ", url: " + str(split_urls[progress]))
-
-        if not split_urls[progress] == None:
-            try:
-                I = url_to_image(split_urls[progress])
-                if (len(I.shape) == 3): # check if the image has width, length and channels
-                    image_name = 'img' + str(progress) + '.jpg' # create a name of each image
-                    save_path = path_to_training + tag + image_name
-                    if count == 0:
-                        save_path = path_to_validation + tag + image_name
-                    cv2.imwrite(save_path, I)
-                    count = (count + 1) % 5 # try to ensure that 20% of data is to validation
-            except:
-                None # print("Error downloading img " + str(progress) + ", url: " + str(split_urls[progress]))
+        
+        try:
+            I = url_to_image(split_urls[progress])
+            if (len(I.shape) == 3): # check if the image has width, length and channels
+                image_name = 'img' + str(progress) + '.jpg' # create a name of each image
+                save_path = path_to_training + tag + image_name
+                if count == 0:
+                    save_path = path_to_validation + tag + image_name
+                cv2.imwrite(save_path, I)
+                count = (count + 1) % 5 # try to ensure that 20% of data is to validation
+        except:
+            None # print("Error downloading img " + str(progress) + ", url: " + str(split_urls[progress]))
 
 
 def download_images_to_path(url_to_urls, path_to_training, path_to_validation):
@@ -47,7 +46,7 @@ def download_images_to_path(url_to_urls, path_to_training, path_to_validation):
 
 def download_frog_images(path_to_train, path_to_validation):
     frogs_data_urls = [
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637",
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846"], "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", 
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167"
