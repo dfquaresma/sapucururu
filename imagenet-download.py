@@ -45,14 +45,7 @@ def download_images_to_path(url_to_urls, path_to_training, path_to_validation):
     save_images_on_disk(split_urls, path_to_training, path_to_validation, tag)
 
 
-if __name__ == '__main__':
-    try:
-        os.mkdir("./imagenet")
-        os.mkdir("./imagenet/train")
-        os.mkdir("./imagenet/validation")
-    except:
-        None
-
+def download_frog_images(path_to_train, path_to_validation):
     frogs_data_urls = [
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", 
@@ -61,18 +54,18 @@ if __name__ == '__main__':
     ]
 
     try:
-        os.mkdir("./imagenet/train/isfrog")
-        os.mkdir("./imagenet/validation/isfrog")
+        os.mkdir(path_to_train + "isfrog")
+        os.mkdir(path_to_validation + "isfrog")
     except:
         None
 
-    path_to_training, path_to_validation = "./imagenet/train/isfrog/", "./imagenet/validation/isfrog/"  
+    path_to_training, path_to_validation = path_to_train + "isfrog/", path_to_validation + "isfrog/"  
     for url in frogs_data_urls:
         # downloading frog data 
         download_images_to_path(url, path_to_training, path_to_validation)
 
 
-
+def download_notfrog_images(path_to_train, path_to_validation):
     not_frogs_data_urls = [
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01861778", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01503061", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01661091", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01473806",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07707451", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07557165", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01317541", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13066129",
@@ -86,12 +79,25 @@ if __name__ == '__main__':
         ] 
 
     try:
-        os.mkdir("./imagenet/train/notfrog")
-        os.mkdir("./imagenet/validation/notfrog")
+        os.mkdir(path_to_train + "notfrog")
+        os.mkdir(path_to_validation + "notfrog")
     except:
         None
 
-    path_to_training, path_to_validation = "./imagenet/train/notfrog/", "./imagenet/validation/notfrog/"  
+    path_to_training, path_to_validation = path_to_train + "notfrog/", path_to_validation + "notfrog/" 
     for url in not_frogs_data_urls:
         # downloading not frog data 
         download_images_to_path(url, path_to_training, path_to_validation)
+
+
+if __name__ == '__main__':
+    try:
+        os.mkdir("./imagenet")
+        os.mkdir("./imagenet/train")
+        os.mkdir("./imagenet/validation")
+    except:
+        None
+
+    path_to_training, path_to_validation = "./imagenet/train/", "./imagenet/validation/" 
+    download_frog_images(path_to_training, path_to_validation)
+    download_notfrog_images(path_to_training, path_to_validation)
