@@ -27,7 +27,7 @@ def save_images_on_disk(split_urls, path_to_training, path_to_validation, tag):
                 I = url_to_image(split_urls[progress])
                 if (len(I.shape) == 3): # check if the image has width, length and channels
                     image_name = 'img' + str(progress) + '.jpg' # create a name of each image
-                    save_path = path_to_training + image_name
+                    save_path = path_to_training + tag + image_name
                     if count == 0:
                         save_path = path_to_validation + tag + image_name
                     cv2.imwrite(save_path, I)
