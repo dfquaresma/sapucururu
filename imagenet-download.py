@@ -14,7 +14,7 @@ def url_to_image(url):
     return image
 
 
-def save_images_on_disk(split_urls, path_to_training, path_to_validation):
+def save_images_on_disk(split_urls, path_to_training, path_to_validation, tag):
     count = 0
     for progress in range(len(split_urls)): 
         # store all the images on a directory, print out progress whenever progress is 
@@ -29,19 +29,19 @@ def save_images_on_disk(split_urls, path_to_training, path_to_validation):
                     image_name = 'img' + str(progress) + '.jpg' # create a name of each image
                     save_path = path_to_training + image_name
                     if count == 0:
-                        save_path = path_to_validation + image_name
+                        save_path = path_to_validation + tag + image_name
                     cv2.imwrite(save_path, I)
                     count = (count + 1) % 5 # try to ensure that 20% of data is to validation
             except:
                 None # print("Error downloading img " + str(progress) + ", url: " + str(split_urls[progress]))
 
 
-def download_images_to_path(url_to_urls, path_to_training, path_to_validation):
+def download_images_to_path(tag, url_to_urls, path_to_training, path_to_validation):
     page = requests.get(url_to_urls) # ship synset
     soup = BeautifulSoup(page.content, 'html.parser') # puts the content of the website into the soup variable, each url on a different line
     str_soup = str(soup) # convert soup to string so it can be split
     split_urls = str_soup.split('\r\n') # split so each url is a different possition on a list
-    save_images_on_disk(split_urls, path_to_training, path_to_validation)
+    save_images_on_disk(split_urls, path_to_training, path_to_validation, tag)
 
 
 if __name__ == '__main__':
@@ -57,14 +57,14 @@ if __name__ == '__main__':
     path_to_training, path_to_validation = "./imagenet/train/isfrog/", "./imagenet/validation/isfrog/"  
 
     # downloading frog data 
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167", path_to_training, path_to_validation)
-    download_images_to_path("http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637", path_to_training, path_to_validation)
+    download_images_to_path("00-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", path_to_training, path_to_validation)
+    download_images_to_path("01-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", path_to_training, path_to_validation)
+    download_images_to_path("02-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", path_to_training, path_to_validation)
+    download_images_to_path("03-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", path_to_training, path_to_validation)
+    download_images_to_path("04-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", path_to_training, path_to_validation)
+    download_images_to_path("05-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776", path_to_training, path_to_validation)
+    download_images_to_path("06-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", path_to_training, path_to_validation)
+    download_images_to_path("07-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620", path_to_training, path_to_validation)
+    download_images_to_path("08-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", path_to_training, path_to_validation)
+    download_images_to_path("09-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167", path_to_training, path_to_validation)
+    download_images_to_path("10-", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637", path_to_training, path_to_validation)
