@@ -13,8 +13,7 @@ def url_to_image(url):
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     return image
 
-
-def save_images_on_disk(split_urls, path_to_training, path_to_validation, tag):
+def save_images_on_disk(split_urls, path_to_training, path_to_validation, tag, limit=None):
     count = 0
     for progress in range(len(split_urls)): 
         # store all the images on a directory, print out progress whenever progress is 
@@ -22,34 +21,34 @@ def save_images_on_disk(split_urls, path_to_training, path_to_validation, tag):
         if ((progress + 1) % 20 == 0):
             print("downloading img" + str(progress) + ", url: " + str(split_urls[progress]))
         
+        if (limit != None and count >= limit): break
+
         try:
             I = url_to_image(split_urls[progress])
             if (len(I.shape) == 3): # check if the image has width, length and channels
                 image_name = 'img' + str(progress) + '.jpg' # create a name of each image
                 save_path = path_to_training + tag + image_name
-                if count == 0:
+                if (count % 5) == 0: # try to ensure that 20% of data is to validation
                     save_path = path_to_validation + tag + image_name
                 cv2.imwrite(save_path, I)
-                count = (count + 1) % 5 # try to ensure that 20% of data is to validation
+                count += 1
         except:
             None # print("Error downloading img " + str(progress) + ", url: " + str(split_urls[progress]))
 
-
-def download_images_to_path(url_to_urls, path_to_training, path_to_validation):
+def download_images_to_path(url_to_urls, path_to_training, path_to_validation, limit=None):
     page = requests.get(url_to_urls) # ship synset
     soup = BeautifulSoup(page.content, 'html.parser') # puts the content of the website into the soup variable, each url on a different line
     str_soup = str(soup) # convert soup to string so it can be split
     split_urls = str_soup.split('\r\n') # split so each url is a different possition on a list
     tag = url_to_urls.split("=")[-1]
-    save_images_on_disk(split_urls, path_to_training, path_to_validation, tag)
+    save_images_on_disk(split_urls, path_to_training, path_to_validation, tag, limit=limit)
 
-
-def download_frog_images(path_to_train, path_to_validation):
-    frogs_data_urls = [
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", 
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167"
+def download_frog_images(path_to_train, path_to_validation, limit=None):
+    frogs_data_urls = [ 
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637", 
+        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776"#,
+        #"http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620"
+        #"http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170"
     ]
 
     try:
@@ -61,10 +60,9 @@ def download_frog_images(path_to_train, path_to_validation):
     path_to_training, path_to_validation = path_to_train + "isfrog/", path_to_validation + "isfrog/"  
     for url in frogs_data_urls:
         # downloading frog data 
-        download_images_to_path(url, path_to_training, path_to_validation)
+        download_images_to_path(url, path_to_training, path_to_validation, limit=limit)
 
-
-def download_notfrog_images(path_to_train, path_to_validation):
+def download_notfrog_images(path_to_train, path_to_validation, limit=None):
     not_frogs_data_urls = [
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01861778", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01503061", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01661091", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01473806",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07707451", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07557165", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01317541", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13066129",
@@ -86,8 +84,7 @@ def download_notfrog_images(path_to_train, path_to_validation):
     path_to_training, path_to_validation = path_to_train + "notfrog/", path_to_validation + "notfrog/" 
     for url in not_frogs_data_urls:
         # downloading not frog data 
-        download_images_to_path(url, path_to_training, path_to_validation)
-
+        download_images_to_path(url, path_to_training, path_to_validation, limit=limit)
 
 if __name__ == '__main__':
     try:
@@ -99,4 +96,4 @@ if __name__ == '__main__':
 
     path_to_training, path_to_validation = "./imagenet/train/", "./imagenet/validation/" 
     download_frog_images(path_to_training, path_to_validation)
-    download_notfrog_images(path_to_training, path_to_validation)
+    download_notfrog_images(path_to_training, path_to_validation, 500)
