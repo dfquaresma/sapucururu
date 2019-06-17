@@ -50,8 +50,6 @@ if __name__ == '__main__':
         os.mkdir("./imagenet")
         os.mkdir("./imagenet/train")
         os.mkdir("./imagenet/validation")
-        os.mkdir("./imagenet/train/isfrog")
-        os.mkdir("./imagenet/validation/isfrog")
     except:
         None
 
@@ -62,12 +60,19 @@ if __name__ == '__main__':
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167"
     ]
 
+    try:
+        os.mkdir("./imagenet/train/isfrog")
+        os.mkdir("./imagenet/validation/isfrog")
+    except:
+        None
+
     path_to_training, path_to_validation = "./imagenet/train/isfrog/", "./imagenet/validation/isfrog/"  
     for url in frogs_data_urls:
         # downloading frog data 
         download_images_to_path(url, path_to_training, path_to_validation)
 
-    
+
+
     not_frogs_data_urls = [
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01861778", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01503061", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01661091", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01473806",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07707451", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07557165", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01317541", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13066129",
@@ -79,6 +84,12 @@ if __name__ == '__main__':
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01458842", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321456", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01767661", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321579",
         "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01324610", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01324799", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01323781"
         ] 
+
+    try:
+        os.mkdir("./imagenet/train/notfrog")
+        os.mkdir("./imagenet/validation/notfrog")
+    except:
+        None
 
     path_to_training, path_to_validation = "./imagenet/train/notfrog/", "./imagenet/validation/notfrog/"  
     for url in not_frogs_data_urls:
