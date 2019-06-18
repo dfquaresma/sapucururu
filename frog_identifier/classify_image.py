@@ -20,6 +20,7 @@ def get_data_generator(data_path):
 
     return generator
 
+# you shall move you dataset to that file's directory 
 train_generator = get_data_generator('./imagenet/train/')
 validation_generator = get_data_generator('./imagenet/validation/')
 
