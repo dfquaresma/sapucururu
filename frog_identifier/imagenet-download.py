@@ -1,10 +1,6 @@
-from bs4 import BeautifulSoup # require pip install BeautifulSoup4
+from bs4 import BeautifulSoup
+import requests, cv2, urllib, os, sys, PIL.Image
 import numpy as np
-import requests # require pip install requests
-import cv2 # require pip install cv2
-import PIL.Image # require pip install Pillow
-import urllib # require pip install
-import os, sys
 
 def url_to_image(url):
     # download the image, convert it to a NumPy array, and then read it into OpenCV format
