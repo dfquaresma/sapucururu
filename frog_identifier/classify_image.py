@@ -50,8 +50,8 @@ def create_model():
     model.add(Dropout(0.2))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(2, activation = 'softmax'))
-
-  return model
+    
+    return model
 
 model = createModel()
 model.compile(loss=keras.losses.categorical_crossentropy,
