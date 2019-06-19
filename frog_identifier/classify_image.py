@@ -28,9 +28,11 @@ def url_to_image(url, tmp_img_path):
 
 if __name__ == '__main__':
     model = get_pretrained_model('cifar10_frog_identifier_model_architecture.json', 'cifar10_frog_identifier_model_weights.h5')
-    run = True
-    while (run):
+    while (True):
         URL = input("Enter the Image URL: ")
+        if not URL:
+            break
+
         tmp_img_path = './tmp-img.jpg'
         actual_image = url_to_image(URL, tmp_img_path) # enter the url of the .jpg image
         img = load_img(tmp_img_path, target_size=(32, 32))
@@ -40,9 +42,5 @@ if __name__ == '__main__':
         
         print('Probability that the image is a frog:', preds[0,0])
         print('Probability that the image is NOT a frog:', preds[0,1])
-
-        resp = input("Do you wanna stop? (yes/no) ")
-        if resp == "yes":
-            run = False
-
+        
         os.remove(tmp_img_path)
