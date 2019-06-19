@@ -9,13 +9,13 @@ import matplotlib.pylab as plt
 import keras
 
 # input image dimensions
-img_rows, img_cols = 32, 32#256, 256
-batch_size = 32#128
+img_rows, img_cols = 256, 256
+batch_size = 128
 epochs = 1500
 
 # you shall move you dataset to that file's directory 
-test_data_path = './cifar10/test/'#'./imagenet/validation/'
-train_data_path = './cifar10/train/'#'./imagenet/train/'
+test_data_path = './imagenet/validation/'
+train_data_path = './imagenet/train/'
 
 # https://blog.goodaudience.com/train-a-keras-neural-network-with-imagenet-synsets-in-google-colaboratory-e68dc4fd759f
 test_datagen = ImageDataGenerator()
@@ -69,14 +69,9 @@ def create_model():
     return model
 
 model = create_model()
-# Model reconstruction from JSON file
-#with open('frog_identifier_model_architecture.json', 'r') as f:
-#    model = model_from_json(f.read())
 
-# Load weights into the new model
-#model.load_weights('frog_identifier_model_weights.h5')
-
-model.compile(loss=keras.losses.categorical_crossentropy,
+model.compile(
+    loss=keras.losses.categorical_crossentropy,
     optimizer=keras.optimizers.Adam(),
     metrics=['accuracy']
 )
@@ -91,13 +86,15 @@ model.fit_generator(
     verbose=1,
     validation_data=validation_generator,
     validation_steps=(ceil(len(validation_generator)/batch_size)),
-    callbacks=[callback]
+    #callbacks=[callback]
 )
 
 score = model.evaluate_generator(test_generator, steps=(ceil(len(test_generator)/batch_size)), verbose=0)
+# https://adventuresinmachinelearning.com/keras-tutorial-cnn-11-lines/
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
+# https://jovianlin.io/saving-loading-keras-models/
 # Save the weights
 model.save_weights('frog_identifier_model_weights.h5')
 
