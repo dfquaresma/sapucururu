@@ -1,6 +1,7 @@
 from __future__ import print_function
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
+from keras.layers.normalization import BatchNormalization
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pylab as plt
 
@@ -11,6 +12,7 @@ num_classes = 2
 epochs = 10
 
 def get_data_generator(data_path):
+    # https://blog.goodaudience.com/train-a-keras-neural-network-with-imagenet-synsets-in-google-colaboratory-e68dc4fd759f
     datagen  = ImageDataGenerator()
     generator = datagen.flow_from_directory(
             data_path,
@@ -24,29 +26,32 @@ def get_data_generator(data_path):
 train_generator = get_data_generator('./imagenet/train/')
 validation_generator = get_data_generator('./imagenet/validation/')
 
-def createModel():
+def create_model():
+    # https://www.codeproject.com/Articles/4023566/Cat-or-Not-An-Image-Classifier-using-Python-and-Ke
     model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=input_shape))
-    model.add(Conv2D(32, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-  
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-  
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-  
+    model.add(Conv2D(32, kernel_size = (3, 3), activation='relu', input_shape=(IMAGE_SIZE, IMAGE_SIZE, 1)))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.2))
     model.add(Flatten())
-    model.add(Dense(512, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(nClasses, activation='softmax'))
-  
-    return model
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(2, activation = 'softmax'))
+
+  return model
 
 model = createModel()
 model.compile(loss=keras.losses.categorical_crossentropy,
@@ -54,6 +59,7 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               metrics=['accuracy'])
 
 class AccuracyHistory(keras.callbacks.Callback):
+    # https://adventuresinmachinelearning.com/keras-tutorial-cnn-11-lines/
     def on_train_begin(self, logs={}):
         self.acc = []
 
