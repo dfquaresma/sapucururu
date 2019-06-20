@@ -5,41 +5,12 @@ from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.layers.normalization import BatchNormalization
 from keras.preprocessing.image import ImageDataGenerator
 from math import ceil
-import matplotlib.pylab as plt
 import keras
 
 # input image dimensions
 img_rows, img_cols = 256, 256
 batch_size = 128
 epochs = 1500
-
-# you shall move you dataset to that file's directory 
-test_data_path = './imagenet/validation/'
-train_data_path = './imagenet/train/'
-
-# https://blog.goodaudience.com/train-a-keras-neural-network-with-imagenet-synsets-in-google-colaboratory-e68dc4fd759f
-test_datagen = ImageDataGenerator()
-test_generator = test_datagen.flow_from_directory(
-    test_data_path,
-    target_size=(img_rows, img_cols), # The target_size is the size of your input images,every image will be resized to this size
-    batch_size=batch_size,
-    class_mode='categorical'
-)
-
-def get_data_generator(data_path, datagen, subset):
-    # https://stackoverflow.com/questions/42443936/keras-split-train-test-set-when-using-imagedatagenerator
-    generator = datagen.flow_from_directory(
-        data_path,
-        target_size=(img_rows, img_cols), # The target_size is the size of your input images,every image will be resized to this size
-        batch_size=batch_size,
-        class_mode='categorical',
-        subset=subset
-    )
-    return generator
-
-train_datagen = ImageDataGenerator(horizontal_flip=False, validation_split=0.2)
-train_generator = get_data_generator(train_data_path, train_datagen, 'training')
-validation_generator = get_data_generator(train_data_path, train_datagen, 'validation')
 
 def create_model():
     # https://www.codeproject.com/Articles/4023566/Cat-or-Not-An-Image-Classifier-using-Python-and-Ke
@@ -65,39 +36,81 @@ def create_model():
     model.add(Dropout(0.2))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(2, activation = 'softmax'))
-    
+
     return model
 
-model = create_model()
+def get_data_generator(data_path, datagen, subset):
+    # https://stackoverflow.com/questions/42443936/keras-split-train-test-set-when-using-imagedatagenerator
+    generator = datagen.flow_from_directory(
+        data_path,
+        target_size=(img_rows, img_cols), # The target_size is the size of your input images,every image will be resized to this size
+        batch_size=batch_size,
+        class_mode='categorical',
+        subset=subset
+    )
+    
+    return generator
 
-model.compile(
-    loss=keras.losses.categorical_crossentropy,
-    optimizer=keras.optimizers.Adam(),
-    metrics=['accuracy']
-)
+def get_data_generators(test_data_path, train_data_path):
+    # https://blog.goodaudience.com/train-a-keras-neural-network-with-imagenet-synsets-in-google-colaboratory-e68dc4fd759f
+    test_datagen = ImageDataGenerator()
+    test_generator = test_datagen.flow_from_directory(
+        test_data_path,
+        target_size=(img_rows, img_cols), # The target_size is the size of your input images,every image will be resized to this size
+        batch_size=batch_size,
+        class_mode='categorical'
+    )
 
-# https://machinelearningmastery.com/how-to-stop-training-deep-neural-networks-at-the-right-time-using-early-stopping
-callback = keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50, min_delta=0.001, baseline=0.0001)
+    train_datagen = ImageDataGenerator(horizontal_flip=False, validation_split=0.2)
+    train_generator = get_data_generator(train_data_path, train_datagen, 'training')
+    validation_generator = get_data_generator(train_data_path, train_datagen, 'validation')
 
-model.fit_generator(
-    train_generator,
-    steps_per_epoch=(ceil(len(train_generator)/batch_size)),
-    epochs=epochs,
-    verbose=1,
-    validation_data=validation_generator,
-    validation_steps=(ceil(len(validation_generator)/batch_size)),
-    #callbacks=[callback]
-)
+    return test_generator, train_generator, validation_generator
 
-score = model.evaluate_generator(test_generator, steps=(ceil(len(test_generator)/batch_size)), verbose=0)
-# https://adventuresinmachinelearning.com/keras-tutorial-cnn-11-lines/
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
+if __name__ == '__main__':
+    model = create_model()
+    model.compile(
+        loss=keras.losses.categorical_crossentropy,
+        optimizer=keras.optimizers.Adam(),
+        metrics=['accuracy']
+    )
 
-# https://jovianlin.io/saving-loading-keras-models/
-# Save the weights
-model.save_weights('frog_identifier_model_weights.h5')
+    # you shall move you dataset to that file's directory 
+    test_data_path = input("Enter the TEST dataset path: ") # './imagenet/test/'
+    train_data_path = input("Enter the TRAIN dataset path: ") # './imagenet/train/'
+    test_generator, train_generator, validation_generator = get_data_generators(test_data_path, train_data_path)    
 
-# Save the model architecture
-with open('frog_identifier_model_architecture.json', 'w') as f:
-    f.write(model.to_json())
+    # https://machinelearningmastery.com/how-to-stop-training-deep-neural-networks-at-the-right-time-using-early-stopping
+    callback = keras.callbacks.EarlyStopping(
+        monitor='val_loss', 
+        mode='min', 
+        verbose=1, 
+        patience=50, 
+        min_delta=0.001, 
+        baseline=0.0001
+    )
+    model.fit_generator(
+        train_generator,
+        steps_per_epoch=(ceil(len(train_generator)/batch_size)),
+        epochs=epochs,
+        verbose=1,
+        validation_data=validation_generator,
+        validation_steps=(ceil(len(validation_generator)/batch_size)),
+        callbacks=[callback]
+    )
+
+    score = model.evaluate_generator(test_generator, steps=(ceil(len(test_generator)/batch_size)), verbose=0)
+    # https://adventuresinmachinelearning.com/keras-tutorial-cnn-11-lines/
+    print('Test loss:', score[0])
+    print('Test accuracy:', score[1])
+
+    model_weights_path = input("Enter the model's weights name and path: ") # './trained-models/frog_identifier_model_weights.h5'
+    model_architecture_path = input("Enter the model's architecture name and path: ") # './trained-models/frog_identifier_model_architecture.json'
+
+    # https://jovianlin.io/saving-loading-keras-models/
+    # Save the weights
+    model.save_weights(model_weights_path)
+
+    # Save the model architecture
+    with open(model_architecture_path, 'w') as f:
+        f.write(model.to_json())
