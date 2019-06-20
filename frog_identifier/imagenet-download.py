@@ -39,48 +39,17 @@ def download_images_to_path(url_to_urls, path_to_training, path_to_validation, l
     tag = url_to_urls.split("=")[-1]
     save_images_on_disk(split_urls, path_to_training, path_to_validation, tag, limit=limit)
 
-def download_frog_images(path_to_train, path_to_validation, limit=None):
-    frogs_data_urls = [ 
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01640846", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643507", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01654637", 
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01643896", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01645776",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01650167"#, "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01644900", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648620" # Those links are commented  
-        #"http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01648139", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01649170"                                                                         # because we didn't use them
-    ]
+def download_frog_images(path_to_train, path_to_validation, specie, url, limit=None):   
 
     try:
-        os.mkdir(path_to_train + "isfrog")
-        os.mkdir(path_to_validation + "isfrog")
+        os.mkdir(path_to_train + specie)
+        os.mkdir(path_to_validation + specie)
     except:
         None
 
-    path_to_training, path_to_validation = path_to_train + "isfrog/", path_to_validation + "isfrog/"  
-    for url in frogs_data_urls:
-        # downloading frog data 
-        download_images_to_path(url, path_to_training, path_to_validation, limit=limit)
-
-def download_notfrog_images(path_to_train, path_to_validation, limit=None):
-    not_frogs_data_urls = [
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01861778", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01503061", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01661091", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01473806",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07707451", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07557165", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01317541", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13024012",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n12997654", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n04341686", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n03309808", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n00441824", 
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n00433661", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n00463246", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01323781", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13066129", 
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09238926", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09468604", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09366317", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09437454",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n11672400", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13104059", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13100156", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321579",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n11773987", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n13083023", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n02384858", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321230",
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01458842", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01321456", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01767661", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01324799", 
-        "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n01324610", "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09416076"#, "http://image-net.org/api/text/imagenet.synset.geturls?wnid=n11722982" # This link is commented because we didn't use it
-        ] 
-
-    try:
-        os.mkdir(path_to_train + "notfrog")
-        os.mkdir(path_to_validation + "notfrog")
-    except:
-        None
-
-    path_to_training, path_to_validation = path_to_train + "notfrog/", path_to_validation + "notfrog/" 
-    for url in not_frogs_data_urls:
-        # downloading not frog data 
-        download_images_to_path(url, path_to_training, path_to_validation, limit=limit)
+    path_to_training, path_to_validation = path_to_train + specie + "/", path_to_validation + specie + "/"  
+    
+    download_images_to_path(url, path_to_training, path_to_validation, limit=limit)
 
 if __name__ == '__main__':
     try:
@@ -90,6 +59,13 @@ if __name__ == '__main__':
     except:
         None
 
-    path_to_training, path_to_validation = "./imagenet/train/", "./imagenet/validation/" 
-    download_frog_images(path_to_training, path_to_validation)
-    download_notfrog_images(path_to_training, path_to_validation, 500)
+    species = ["chorus", "tree", "bufo", "natterjack", "bullfrog"]
+    frogs_data_urls = ["http://www.image-net.org/api/text/imagenet.synset.geturls?wnid=n01652026", 
+                      "http://www.image-net.org/api/text/imagenet.synset.geturls?wnid=n01644373", 
+                      "http://www.image-net.org/api/text/imagenet.synset.geturls?wnid=n01646292",
+                      "http://www.image-net.org/api/text/imagenet.synset.geturls?wnid=n01646648",
+                      "http://www.image-net.org/api/text/imagenet.synset.geturls?wnid=n01641577"]
+    path_to_training, path_to_validation = "./imagenet/train/", "./imagenet/validation/"
+
+    for i in range(len(species)):
+        download_frog_images(path_to_training, path_to_validation, species[i], frogs_data_urls[i])
