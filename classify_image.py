@@ -20,27 +20,32 @@ def url_to_image(url, tmp_img_path):
   image = np.asarray(bytearray(resp.read()), dtype="uint8")
   image = cv2.imdecode(image, cv2.IMREAD_COLOR)
   I = image
-  if (len(I.shape)) == 3: #check if the image has width, length and channels, as I found some withouth channel
+  if len(I.shape) == 3: # check if the image has width, length and channels, as I found some withouth channel
     save_path = tmp_img_path
     cv2.imwrite(save_path, I)
 
   return image
 
+def predict_image(model, URL):
+    tmp_img_path = './tmp-img.jpg'
+    actual_image = url_to_image(URL, tmp_img_path) # enter the url of the .jpg image
+    img = load_img(tmp_img_path, target_size=(32, 32))
+    img_array = img_to_array(img)
+    img_array_np_expanded = np.expand_dims(img_array, axis=0)
+    preds = model.predict(img_array_np_expanded)
+    
+    print('Probability that the image is a frog:', preds[0,0])
+    print('Probability that the image is NOT a frog:', preds[0,1])
+    
+    os.remove(tmp_img_path)
+
 if __name__ == '__main__':
-    model = get_pretrained_model('cifar10_frog_identifier_model_architecture.json', 'cifar10_frog_identifier_model_weights.h5')
+    model_architecture_path = input("Enter the model architecture file path: ") # './trained-models/frog_identifier_cifar10_model_architecture.json'
+    model_weights_path = input("Enter the model weights file path: ") # './trained-models/frog_identifier_cifar10_model_weights.h5'
+    model = get_pretrained_model(model_architecture_path, model_weights_path)
     while (True):
         URL = input("Enter the Image URL: ")
         if not URL:
             break
-
-        tmp_img_path = './tmp-img.jpg'
-        actual_image = url_to_image(URL, tmp_img_path) # enter the url of the .jpg image
-        img = load_img(tmp_img_path, target_size=(32, 32))
-        img_array = img_to_array(img)
-        img_array_np_expanded = np.expand_dims(img_array, axis=0)
-        preds = model.predict(img_array_np_expanded)
-        
-        print('Probability that the image is a frog:', preds[0,0])
-        print('Probability that the image is NOT a frog:', preds[0,1])
-        
-        os.remove(tmp_img_path)
+            
+        predict_image(model, URL)
