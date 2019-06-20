@@ -67,7 +67,7 @@ def get_data_generators(test_data_path, train_data_path):
 
     return test_generator, train_generator, validation_generator
 
-if __name__ == '__main__':
+def train_model(test_data_path, train_data_path, model_weights_path, model_architecture_path):
     model = create_model()
     model.compile(
         loss=keras.losses.categorical_crossentropy,
@@ -75,9 +75,6 @@ if __name__ == '__main__':
         metrics=['accuracy']
     )
 
-    # you shall move you dataset to that file's directory 
-    test_data_path = input("Enter the TEST dataset path: ") # './imagenet/test/'
-    train_data_path = input("Enter the TRAIN dataset path: ") # './imagenet/train/'
     test_generator, train_generator, validation_generator = get_data_generators(test_data_path, train_data_path)    
 
     # https://machinelearningmastery.com/how-to-stop-training-deep-neural-networks-at-the-right-time-using-early-stopping
@@ -104,9 +101,6 @@ if __name__ == '__main__':
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
-    model_weights_path = input("Enter the model's weights name and path: ") # './trained-models/frog_identifier_model_weights.h5'
-    model_architecture_path = input("Enter the model's architecture name and path: ") # './trained-models/frog_identifier_model_architecture.json'
-
     # https://jovianlin.io/saving-loading-keras-models/
     # Save the weights
     model.save_weights(model_weights_path)
@@ -114,3 +108,11 @@ if __name__ == '__main__':
     # Save the model architecture
     with open(model_architecture_path, 'w') as f:
         f.write(model.to_json())
+
+if __name__ == '__main__':
+    test_data_path = input("Enter the TEST dataset path: ") # './imagenet/test/'
+    train_data_path = input("Enter the TRAIN dataset path: ") # './imagenet/train/'
+    model_weights_path = input("Enter the model's weights name and path: ") # './trained-models/frog_identifier_model_weights.h5'
+    model_architecture_path = input("Enter the model's architecture name and path: ") # './trained-models/frog_identifier_model_architecture.json'
+
+    train_model(test_data_path, train_data_path, model_weights_path, model_architecture_path)
