@@ -24,12 +24,12 @@ def create_model():
     model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
     model.add(BatchNormalization())
-    #model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
-    #model.add(MaxPooling2D(pool_size=(2,2)))
-    #model.add(BatchNormalization())
-    #model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
-    #model.add(MaxPooling2D(pool_size=(2,2)))
-    #model.add(BatchNormalization())
+    model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(BatchNormalization())
     model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(256, activation='relu'))
@@ -78,22 +78,14 @@ def train_model(test_data_path, train_data_path, model_weights_path, model_archi
     test_generator, train_generator, validation_generator = get_data_generators(test_data_path, train_data_path)    
 
     # https://machinelearningmastery.com/how-to-stop-training-deep-neural-networks-at-the-right-time-using-early-stopping
-    callback = keras.callbacks.EarlyStopping(
-        monitor='val_loss', 
-        mode='min', 
-        verbose=1, 
-        patience=50, 
-        min_delta=0.001, 
-        baseline=0.0001
-    )
+    #callback = keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50, min_delta=0.001, baseline=0.0001)
     model.fit_generator(
         train_generator,
         steps_per_epoch=(ceil(len(train_generator)/batch_size)),
         epochs=epochs,
         verbose=1,
         validation_data=validation_generator,
-        validation_steps=(ceil(len(validation_generator)/batch_size)),
-        callbacks=[callback]
+        validation_steps=(ceil(len(validation_generator)/batch_size))#,callbacks=[callback]
     )
 
     score = model.evaluate_generator(test_generator, steps=(ceil(len(test_generator)/batch_size)), verbose=0)
@@ -112,7 +104,9 @@ def train_model(test_data_path, train_data_path, model_weights_path, model_archi
 if __name__ == '__main__':
     test_data_path = input("Enter the TEST dataset path: ") # './imagenet/test/'
     train_data_path = input("Enter the TRAIN dataset path: ") # './imagenet/train/'
-    model_weights_path = input("Enter the model's weights name and path: ") # './trained-models/frog_identifier_model_weights.h5'
-    model_architecture_path = input("Enter the model's architecture name and path: ") # './trained-models/frog_identifier_model_architecture.json'
-
+    model_weights_path = input("Enter the model's weights name and path: ") # './trained-models/frog_identifier_imagenet256_model_weights.h5'
+    model_architecture_path = input("Enter the model's architecture name and path: ") # './trained-models/frog_identifier_imagenet256_model_architecture.json'
+    [img_rows, img_cols] = input("Enter the image's row and col separated by comma (row,col): ").split(",") # 256,256
+    img_rows, img_cols = int(img_rows), int(img_cols)
+    
     train_model(test_data_path, train_data_path, model_weights_path, model_architecture_path)
