@@ -13,16 +13,16 @@ def get_pretrained_model(architecture_path, weights_path):
     model.load_weights(weights_path)
     return model
 
-i_model_architecture_path = os.environ['IMODEL_ARCHITECTURE_PATH']
-i_model_weights_path = os.environ['IMODEL_WEIGHTS_PATH']
+i_model_architecture_path = os.environ['imodel_architecture_path']
+i_model_weights_path = os.environ['imodel_wights_path']
 i_model = get_pretrained_model(i_model_architecture_path, i_model_weights_path)
-c_model_architecture_path = os.environ['CMODEL_ARCHITECTURE_PATH']
-c_model_weights_path = os.environ['CMODEL_WEIGHTS_PATH']
-c_model = get_pretrained_model(c_model_architecture_path, c_model_weights_path)
-
-tmp = list(map(int, os.environ['ITARGET_SIZE'].split(",")))
+tmp = list(map(int, os.environ['itarget_size'].split(",")))
 i_target_size = (tmp[0], tmp[1])
-tmp = list(map(int, os.environ['CTARGET_SIZE'].split(",")))
+
+c_model_architecture_path = os.environ['cmodel_architecture_path']
+c_model_weights_path = os.environ['cmodel_wights_path']
+c_model = get_pretrained_model(c_model_architecture_path, c_model_weights_path)
+tmp = list(map(int, os.environ['ctarget_size'].split(",")))
 c_target_size = (tmp[0], tmp[1])
 
 def url_to_image(url, tmp_img_path):
@@ -64,4 +64,8 @@ def predict_image(URL):
     return str(i_result) + "\n" + str(c_result)
 
 def handle(req):
+  try:
     return predict_image(req)
+
+  except Exception as e:
+    return e

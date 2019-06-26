@@ -1,2 +1,1 @@
 language: python3-flask
-fprocess: python index.py

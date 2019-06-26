@@ -21,6 +21,7 @@ WORKDIR /home/app/
 
 COPY index.py           .
 COPY requirements.txt   .
+COPY trained-models/*   ./
 
 USER root
 RUN pip install -r requirements.txt
@@ -36,13 +37,21 @@ WORKDIR /home/app/
 
 USER root
 COPY function           function
-RUN chown -R app:app ./
+#RUN chown -R app:app ./
 USER app
 
-ENV cgi_headers="true"
+ENV imodel_architecture_path="/home/app/frog_identifier_cifar10-final_model_architecture.json"
+ENV imodel_wights_path="/home/app/frog_identifier_cifar10-final_model_weights.h5"
+ENV itarget_size="32,32"
+ENV cmodel_architecture_path="/home/app/frog_classifier_imagenet128-final_model_architecture.json"
+ENV cmodel_wights_path="/home/app/frog_classifier_imagenet128-final_model_weights.h5"
+ENV ctarget_size="128,128"
+
 ENV mode="http"
+ENV cgi_headers="true"
+ENV fprocess="python index.py"
 ENV upstream_url="http://127.0.0.1:5000"
 
-HEALTHCHECK --interval=5s CMD [ -e /tmp/.lock ] || exit 1
+#HEALTHCHECK --interval=10s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
