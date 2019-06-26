@@ -1,6 +1,6 @@
 from keras.models import model_from_json
 from keras.preprocessing.image import img_to_array, load_img
-import cv2, urllib, os
+import cv2, urllib, os, sys
 import numpy as np
 
 def get_pretrained_model(architecture_path, weights_path):
@@ -40,8 +40,8 @@ def predict_image(model, URL):
     os.remove(tmp_img_path)
 
 if __name__ == '__main__':
-    model_architecture_path = input("Enter the model architecture file path: ") # './trained-models/frog_identifier_cifar10_model_architecture.json'
-    model_weights_path = input("Enter the model weights file path: ") # './trained-models/frog_identifier_cifar10_model_weights.h5'
+    model_architecture_path = sys.argv[1] # input("Enter the model architecture file path: ") # './trained-models/frog_identifier_cifar10-final_model_architecture.json'
+    model_weights_path = sys.argv[2] # input("Enter the model weights file path: ") # './trained-models/frog_identifier_cifar10-final_model_weights.h5'
     model = get_pretrained_model(model_architecture_path, model_weights_path)
     while (True):
         URL = input("Enter the Image URL: ")
