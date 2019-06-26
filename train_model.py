@@ -5,7 +5,8 @@ from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.layers.normalization import BatchNormalization
 from keras.preprocessing.image import ImageDataGenerator
 from math import ceil
-import keras
+import matplotlib.pyplot as plt
+import keras, sys
 
 # input image dimensions
 img_rows, img_cols = 256, 256
@@ -24,12 +25,12 @@ def create_model():
     model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
     model.add(BatchNormalization())
-    model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(BatchNormalization())
+    #model.add(Conv2D(128, kernel_size=(3,3), activation='relu'))
+    #model.add(MaxPooling2D(pool_size=(2,2)))
+    #model.add(BatchNormalization())
+    #model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+    #model.add(MaxPooling2D(pool_size=(2,2)))
+    #model.add(BatchNormalization())
     model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(256, activation='relu'))
@@ -78,14 +79,15 @@ def train_model(test_data_path, train_data_path, model_weights_path, model_archi
     test_generator, train_generator, validation_generator = get_data_generators(test_data_path, train_data_path)    
 
     # https://machinelearningmastery.com/how-to-stop-training-deep-neural-networks-at-the-right-time-using-early-stopping
-    #callback = keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50, min_delta=0.001, baseline=0.0001)
-    model.fit_generator(
+    callback = keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=1500, min_delta=0.001, baseline=0.0001)
+    history = model.fit_generator(
         train_generator,
-        steps_per_epoch=(ceil(len(train_generator)/batch_size)),
+        steps_per_epoch=(ceil(len(train_generator) / batch_size)),
         epochs=epochs,
         verbose=1,
         validation_data=validation_generator,
-        validation_steps=(ceil(len(validation_generator)/batch_size))#,callbacks=[callback]
+        validation_steps=(ceil(len(validation_generator) / batch_size)),
+        callbacks=[callback]
     )
 
     score = model.evaluate_generator(test_generator, steps=(ceil(len(test_generator)/batch_size)), verbose=0)
@@ -100,13 +102,47 @@ def train_model(test_data_path, train_data_path, model_weights_path, model_archi
     # Save the model architecture
     with open(model_architecture_path, 'w') as f:
         f.write(model.to_json())
+    
+    return history
+
+def plot(history, model_accuracy_path, model_loss_path):
+    # https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/
+    # list all data in history
+    print(history.history.keys())
+
+    # summarize history for accuracy
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    #plt.show()
+    plt.savefig(model_accuracy_path)
+    plt.clf()
+    
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    #plt.show()
+    plt.savefig(model_loss_path)
 
 if __name__ == '__main__':
-    test_data_path = input("Enter the TEST dataset path: ") # './imagenet/test/'
-    train_data_path = input("Enter the TRAIN dataset path: ") # './imagenet/train/'
-    model_weights_path = input("Enter the model's weights name and path: ") # './trained-models/frog_identifier_imagenet256_model_weights.h5'
-    model_architecture_path = input("Enter the model's architecture name and path: ") # './trained-models/frog_identifier_imagenet256_model_architecture.json'
-    [img_rows, img_cols] = input("Enter the image's row and col separated by comma (row,col): ").split(",") # 256,256
-    img_rows, img_cols = int(img_rows), int(img_cols)
-    
-    train_model(test_data_path, train_data_path, model_weights_path, model_architecture_path)
+    test_data_path =  sys.argv[1] # input("Enter the TEST dataset path: ") # './imagenet-to-identification/test/'
+    train_data_path = sys.argv[2] # input("Enter the TRAIN dataset path: ") # './imagenet-to-identification/train/'
+    model_weights_path = sys.argv[3] # input("Enter the model's weights name and path: ") # './trained-models/frog_identifier_imagenet256-final_model_weights.h5'
+    model_architecture_path = sys.argv[4] # input("Enter the model's architecture name and path: ") # './trained-models/frog_identifier_imagenet256-final_model_architecture.json'
+    model_accuracy_path = sys.argv[5] # input("Enter the model's accuracy plot name and path: ") # './plotted-models/frog_identifier_imagenet256-final_accuracy.png'
+    model_loss_path = sys.argv[6] # input("Enter the model's loss plot name and path: ") # './plotted-models/frog_identifier_imagenet256-final_loss.png'
+    [img_rows, img_cols] = sys.argv[7].split(",") # input("Enter the image's row and col separated by comma (row,col): ").split(",") # '256,256'
+    img_rows, img_cols = int(img_rows), int(img_cols)    
+
+    plot(
+        train_model(test_data_path, train_data_path, model_weights_path, model_architecture_path), 
+        model_accuracy_path, 
+        model_loss_path
+    )
