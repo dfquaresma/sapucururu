@@ -1,0 +1,16 @@
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  sapucururu:
+    lang: python3
+    handler: ./sapucururu
+    image: dfquaresma/sapucururu:latest
+    environment:
+        IMODEL_ARCHITECTURE_PATH: "../../trained-models/frog_identifier_cifar10-final_model_architecture.json"
+        IMODEL_WEIGHTS_PATH: "../../trained-models/frog_identifier_cifar10-final_model_weights.h5"
+        CMODEL_ARCHITECTURE_PATH: "../../trained-models/frog_classifier_imagenet128-final_model_architecture.json"
+        CMODEL_WEIGHTS_PATH: "../../trained-models/frog_classifier_imagenet128-final_model_weights.h5"
+        ITARGET_SIZE: "32,32"
+        CTARGET_SIZE: "128,128"
+
