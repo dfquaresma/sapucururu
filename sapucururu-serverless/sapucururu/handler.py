@@ -64,8 +64,8 @@ def predict_image(URL):
     return str(i_result) + "\n" + str(c_result)
 
 def handle(req):
-  try:
-    return predict_image(req)
-
-  except Exception as e:
-    return e
+    try:
+        return predict_image(req.decode("utf-8"))
+    
+    except Exception as e:
+        return str(e)

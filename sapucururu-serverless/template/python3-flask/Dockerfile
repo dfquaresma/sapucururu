@@ -49,7 +49,7 @@ ENV ctarget_size="128,128"
 
 ENV mode="http"
 ENV cgi_headers="true"
-ENV fprocess="python index.py"
+ENV fprocess="python3 index.py"
 ENV upstream_url="http://127.0.0.1:5000"
 
 #HEALTHCHECK --interval=10s CMD [ -e /tmp/.lock ] || exit 1
