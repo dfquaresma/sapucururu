@@ -1,10 +1,12 @@
 from keras.models import model_from_json
 from keras.preprocessing.image import ImageDataGenerator
-from math import ceil
-import keras, sys
+import sys
+from sklearn.metrics import confusion_matrix, classification_report
+from pandas_ml import ConfusionMatrix
+import matplotlib.pyplot as plt
+import numpy as np
 
-# input image dimensions
-batch_size = 128
+batch_size=32
 
 def get_pretrained_model(architecture_path, weights_path):
     # https://jovianlin.io/saving-loading-keras-models/
@@ -16,44 +18,44 @@ def get_pretrained_model(architecture_path, weights_path):
     model.load_weights(weights_path)
     return model
 
-def get_test_data_generator(test_data_path, img_rows_cols_tuple):
+def get_test_data_generator(test_data_path, model_image_size):
     # https://blog.goodaudience.com/train-a-keras-neural-network-with-imagenet-synsets-in-google-colaboratory-e68dc4fd759f
     test_datagen = ImageDataGenerator()
     test_generator = test_datagen.flow_from_directory(
         test_data_path, # './imagenet/test/'
-        target_size=img_rows_cols_tuple, # The target_size is the size of your input images,every image will be resized to this size
+        target_size=model_image_size, # The target_size is the size of your input images,every image will be resized to this size
         batch_size=batch_size,
-        class_mode='categorical'
+        class_mode='categorical',
+        shuffle=False
     )
 
     return test_generator
 
-def evaluate_model(model, test_generator):
-    model.compile(
-        loss=keras.losses.categorical_crossentropy,
-        optimizer=keras.optimizers.Adam(),
-        metrics=['accuracy']
-    )
-    score = model.evaluate_generator(test_generator, steps=(ceil(len(test_generator)/batch_size)), verbose=0)
-    return score[0], score[1]
+def confusion_matrix(model, test_generator):
+    Y_pred = np.array(model.predict_generator(test_generator, steps=len(test_generator), verbose=0))
+    y_pred = np.array(np.argmax(Y_pred, axis=1))
+    print('Classification Report')
+    target_names = ['Frog', 'NotFrog']
+    print(classification_report(test_generator.classes, y_pred, target_names=target_names))
+    
+    cm = ConfusionMatrix(test_generator.classes, y_pred)
+    print('Confusion Matrix')
+    print(cm)
+    return cm
  
 if __name__ == '__main__':
     model_architecture_path = sys.argv[1] # input("Enter the model architecture file path: ") # './trained-models/frog_identifier_cifar10_model_architecture.json'
     model_weights_path = sys.argv[2] # input("Enter the model weights file path: ") # './trained-models/frog_identifier_cifar10_model_weights.h5'
     test_data_path = sys.argv[3] # input("Enter the TEST dataset path: ") # './imagenet-to-identification/test/'
-    img_rows_cols_tuple = sys.argv[4].split(",") # input("Enter the image's row and col separated by comma (row,col): ").split(",") # '256,256'
-    
-    repetitions = 10
-    loss_sum, accuracy_sum, count = 0, 0, 0
-    for i in range(repetitions):
-        model = get_pretrained_model(model_architecture_path, model_weights_path)
-        test_generator = get_test_data_generator(test_data_path, (int(img_rows_cols_tuple[0]), int(img_rows_cols_tuple[1])))
-        loss, accuracy = evaluate_model(model, test_generator)
-        count, loss_sum, accuracy_sum = count + 1, loss_sum + loss, accuracy_sum + accuracy
-        print('Count: %d, test loss: %f, test accuracy: %f' % (count, (loss_sum / count), (accuracy_sum / count)))
+    model_image_size = sys.argv[4].split(",") # input("Enter the image's row and col separated by comma (row,col): ").split(",") # '256,256'
+    plot_title = sys.argv[5]
 
-    final_loss = loss_sum / repetitions
-    final_accuracy = accuracy_sum / repetitions
-    # https://adventuresinmachinelearning.com/keras-tutorial-cnn-11-lines/
-    print('Final test loss:', final_loss)
-    print('Final test accuracy:', final_accuracy)
+    model = get_pretrained_model(model_architecture_path, model_weights_path)
+    test_generator = get_test_data_generator(test_data_path, (int(model_image_size[0]), int(model_image_size[1])))
+
+    cm = confusion_matrix(model, test_generator)
+    ax = cm.plot(normalized=True)
+    ax.set_title(plot_title)
+    ax.set_xticklabels(['Frog', 'NotFrog'])
+    ax.set_yticklabels(['Frog', 'NotFrog'])
+    plt.show()
