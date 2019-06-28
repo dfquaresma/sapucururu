@@ -1,6 +1,6 @@
 from keras.models import model_from_json
 from keras.preprocessing.image import ImageDataGenerator
-import sys
+import sys, os
 from sklearn.metrics import confusion_matrix, classification_report
 from pandas_ml import ConfusionMatrix
 import matplotlib.pyplot as plt
@@ -31,12 +31,11 @@ def get_test_data_generator(test_data_path, model_image_size):
 
     return test_generator
 
-def confusion_matrix(model, test_generator):
+def confusion_matrix(model, test_generator, labels):
     Y_pred = np.array(model.predict_generator(test_generator, steps=len(test_generator), verbose=0))
     y_pred = np.array(np.argmax(Y_pred, axis=1))
     print('Classification Report')
-    target_names = ['Frog', 'NotFrog']
-    print(classification_report(test_generator.classes, y_pred, target_names=target_names))
+    print(classification_report(test_generator.classes, y_pred, target_names=labels))
     
     cm = ConfusionMatrix(test_generator.classes, y_pred)
     print('Confusion Matrix')
@@ -50,12 +49,18 @@ if __name__ == '__main__':
     model_image_size = sys.argv[4].split(",") # input("Enter the image's row and col separated by comma (row,col): ").split(",") # '256,256'
     plot_title = sys.argv[5]
 
+    labels = []
+    for subdir in os.listdir(test_data_path):
+        labels.append(subdir)
+    labels.sort()
+    print('Labels: ', labels)
+
     model = get_pretrained_model(model_architecture_path, model_weights_path)
     test_generator = get_test_data_generator(test_data_path, (int(model_image_size[0]), int(model_image_size[1])))
 
-    cm = confusion_matrix(model, test_generator)
+    cm = confusion_matrix(model, test_generator, labels)
     ax = cm.plot(normalized=True)
     ax.set_title(plot_title)
-    ax.set_xticklabels(['Frog', 'NotFrog'])
-    ax.set_yticklabels(['Frog', 'NotFrog'])
+    ax.set_xticklabels(labels)
+    ax.set_yticklabels(labels)
     plt.show()
