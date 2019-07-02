@@ -40,8 +40,8 @@ COPY function           function
 #RUN chown -R app:app ./
 USER app
 
-ENV imodel_architecture_path="/home/app/frog-identifier-allds-model-architecture.json"
-ENV imodel_wights_path="/home/app/frog-identifier-allds-model-weights.h5"
+ENV imodel_architecture_path="/home/app/frog_identifier_cifar10-final_model_architecture.json"
+ENV imodel_wights_path="/home/app/frog_identifier_cifar10-final_model_weights.h5"
 ENV itarget_size="32,32"
 ENV cmodel_architecture_path="/home/app/frog_classifier_imagenet128-final_model_architecture.json"
 ENV cmodel_wights_path="/home/app/frog_classifier_imagenet128-final_model_weights.h5"
